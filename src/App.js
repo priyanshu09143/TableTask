@@ -48,7 +48,7 @@ const App = () => {
           <select name="" id="" value={Gender} onChange={(e) => setGender(e.target.value)}>
             <option value="All">All Gender</option>
             <option value="male">Male</option>
-            <option value="female">Famale</option>
+            <option value="female">Female</option>
           </select>
         </div>
         <div className="lastseen">
@@ -90,7 +90,9 @@ const App = () => {
               <td>{user.lastSeen}</td>
               <td>{user.totalSepet}</td>
             </tr>
+           
           ))}
+          {userData.length===0 && <h1>No Data Found</h1>}
         </tbody>
       </table>
     </div>
