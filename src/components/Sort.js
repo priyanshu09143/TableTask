@@ -1,12 +1,15 @@
 
-const handleSort = (key, userData, setUserData , setSort , sort) => {
+const handleSort = (key, userData, setUserData , setSort , sort, setShow, show) => {
   const sortedData = [...userData].sort((a, b) => {
+    
     let Akey = new Date(a[key])
     let Bkey = new Date(b[key])
-    if (key === "lastSeen") return sort ? Akey - Bkey : Bkey - Akey ;
+    
+    if (key === "lastSeen" || key==="time") return sort ? Akey - Bkey : Bkey - Akey ;
     else return  sort ? a[key] - b[key] : b[key] - Akey ;
   }
   );
+  setShow(key)
   setSort(!sort)
   setUserData(sortedData);
 };
