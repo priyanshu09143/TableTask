@@ -13,6 +13,14 @@ const App = () => {
   const [show , setShow] = useState("")
   const [searchOptions, setSearchOptions] = useState('Name-Salary')
   const [lastPurchased, setLastPurchased] = useState("All")
+
+  const formatDateTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    const fullDate = dateTime.toDateString();
+    const fullTime = `${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
+    return `${fullDate} ${fullTime}`;
+  }
+
   const applyFilters = () => {
     let filteredData = user;
 
@@ -33,7 +41,9 @@ const App = () => {
     // search filter
     if (search.length > 0) {
       filteredData = filteredData.filter((user) => {
-        return Object.values(user).some((value) =>
+        // Format the date and time for search
+        const formattedDateTime = formatDateTime(user.time);
+        return Object.values({ ...user, time: formattedDateTime }).some((value) =>
           value.toString().toLowerCase().includes(search.toLowerCase())
         );
       });
@@ -49,16 +59,15 @@ const App = () => {
     // Update userData state with the filtered data
     setUserData(filteredData);
   }
+  
   useEffect(() => {
     // Call applyFilters whenever search, Gender, or year changes
-       
     applyFilters();
-  }, [search, Gender,year ,searchOptions, lastPurchased])
+  }, [search, Gender, year, searchOptions, lastPurchased]);
 
   return (
     <div className="table">
       <div className="search">
-
         <input type="text" placeholder='Search..' value={search} onChange={(e) => { setSearch(e.target.value); }} />
         <div className="checkbox">
           Gender
@@ -106,26 +115,26 @@ const App = () => {
         </thead>
         <tbody>
           {userData.map((user) => {
-            let time = new Date(user.time)
-            let fullDate = (time.toDateString())
-            let fullTime = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
-           return <tr key={user.id}>
-              <td>{user.id}</td>
-              <td className='profileName'><img src={user.imgUrl} alt='UserProfile' />{user.name}</td>
-              <td>{user.age}</td>
-              <td>{user.gender}</td>
-              <td>{user.email}</td>
-              <td>{user.salary} USD$</td>
-              <td>{user.order}</td>
-              <td>{user.lastSeen}</td>
-              <td>{user.totalSepet} USD$</td>
-              <td>{fullDate} {fullTime}</td>
-            </tr>
-
-})}
-          {userData.length <= 0 && <h1>No Data Found</h1>}
+            let formattedDateTime = formatDateTime(user.time);
+            return (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td className='profileName'><img src={user.imgUrl} alt='UserProfile' />{user.name}</td>
+                <td>{user.age}</td>
+                <td>{user.gender}</td>
+                <td>{user.email}</td>
+                <td>{user.salary} USD$</td>
+                <td>{user.order}</td>
+                <td>{user.lastSeen}</td>
+                <td>{user.totalSepet} USD$</td>
+                <td>{formattedDateTime}</td>
+              </tr>
+            );
+          })}
+          {userData.length <= 0 && <tr><td colSpan="10">No Data Found</td></tr>}
         </tbody>
       </table>
+
     </div>
   );
 };
