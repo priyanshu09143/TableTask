@@ -32,21 +32,11 @@ const App = () => {
     }
     // search filter
     if (search.length > 0) {
-      // For String search
-      if(searchOptions === "Name-Salary"){
-        if (isNaN(search % 2)) filteredData = filteredData.filter(user => user.name.toLowerCase().includes(search.toLowerCase()));
-        // For Salary Search
-        if (search % 2 === 1 || search % 2 === 0) filteredData = filteredData.filter(user => user.salary.toString().slice(0, search.length).includes(search) );
-      }
-      if(searchOptions === "age"){
-        filteredData = filteredData.filter(user => user.age.toString().slice(0, search.length).includes(search));
-      }
-      if(searchOptions === "totalSepet"){
-        filteredData = filteredData.filter(user => user.totalSepet.toString().slice(0, search.length).includes(search) );
-      }
-
-      
-      
+      filteredData = filteredData.filter((user) => {
+        return Object.values(user).some((value) =>
+          value.toString().toLowerCase().includes(search.toLowerCase())
+        );
+      });
     }
     //  gender filter
     if (Gender !== "All") {
@@ -68,15 +58,7 @@ const App = () => {
   return (
     <div className="table">
       <div className="search">
-        <div>
-          <p>
-            Select Field For Search
-            </p>
-        <select  value={searchOptions} onChange={(e)=> setSearchOptions(e.target.value)}>
-          <option value="Name-Salary">Name-Salary</option>
-          <option value="age">Age</option>
-          <option value="totalSepet">Totel Spents</option>
-        </select></div>
+
         <input type="text" placeholder='Search..' value={search} onChange={(e) => { setSearch(e.target.value); }} />
         <div className="checkbox">
           Gender
