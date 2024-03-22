@@ -11,14 +11,41 @@ const App = () => {
   const [sort, setSort] = useState(true)
   const [year, setYear] = useState("All")
   const [show , setShow] = useState("")
+  const [searchOptions, setSearchOptions] = useState('Name-Salary')
+  const [lastPurchased, setLastPurchased] = useState("All")
   const applyFilters = () => {
     let filteredData = user;
+
+    //Last Purchased Filter
+    if(lastPurchased !== "All"){
+      filteredData = [...filteredData].sort((a, b)=>{
+        let Akey = new Date(a.time)
+        let Bkey = new Date(b.time)
+        return  Bkey - Akey ;
+      });
+      let NewFilter = []
+      for(let i  = 0;  i < +lastPurchased ; i++){
+        if(i >= filteredData.length )continue;
+        else NewFilter.push(filteredData[i])
+      }
+      filteredData = NewFilter
+    }
     // search filter
     if (search.length > 0) {
       // For String search
-      if (isNaN(search % 2)) filteredData = filteredData.filter(user => user.name.toLowerCase().includes(search.toLowerCase()));
-      // For Salary Search
-      if (search % 2 === 1 || search % 2 === 0) filteredData = filteredData.filter(user => user.salary.toString().slice(0, search.length).includes(search) );
+      if(searchOptions === "Name-Salary"){
+        if (isNaN(search % 2)) filteredData = filteredData.filter(user => user.name.toLowerCase().includes(search.toLowerCase()));
+        // For Salary Search
+        if (search % 2 === 1 || search % 2 === 0) filteredData = filteredData.filter(user => user.salary.toString().slice(0, search.length).includes(search) );
+      }
+      if(searchOptions === "age"){
+        filteredData = filteredData.filter(user => user.age.toString().slice(0, search.length).includes(search));
+      }
+      if(searchOptions === "totalSepet"){
+        filteredData = filteredData.filter(user => user.totalSepet.toString().slice(0, search.length).includes(search) );
+      }
+
+      
       
     }
     //  gender filter
@@ -34,12 +61,22 @@ const App = () => {
   }
   useEffect(() => {
     // Call applyFilters whenever search, Gender, or year changes
+       
     applyFilters();
-  }, [search, Gender, year])
+  }, [search, Gender,year ,searchOptions, lastPurchased])
 
   return (
     <div className="table">
       <div className="search">
+        <div>
+          <p>
+            Select Field For Search
+            </p>
+        <select  value={searchOptions} onChange={(e)=> setSearchOptions(e.target.value)}>
+          <option value="Name-Salary">Name-Salary</option>
+          <option value="age">Age</option>
+          <option value="totalSepet">Totel Spents</option>
+        </select></div>
         <input type="text" placeholder='Search..' value={search} onChange={(e) => { setSearch(e.target.value); }} />
         <div className="checkbox">
           Gender
@@ -59,6 +96,15 @@ const App = () => {
                 <option key={index}>{year}</option>
               ))}
           </select>
+        </div>
+        <div>
+        Last Purchase
+        <select value={lastPurchased} onChange={(e)=> setLastPurchased(e.target.value)}>
+          <option value="All" >All</option>
+          <option value="2">Last 2 Purchase </option>
+          <option value="5">Last 5 Purchase </option>
+          <option value="10">Last 10 Purchase </option>
+        </select>
         </div>
       </div>
       <table>
